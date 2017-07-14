@@ -1,0 +1,52 @@
+#!/bin/sh
+
+checkArgs()
+{
+    i=1
+    nbArgs=$#
+    while [ $i -le $nbArgs ]
+    do
+	arg=${!i}
+	if [ $arg != "-u" ] && [ $arg != "-l" ]
+	then
+	    echo "ERROR: $arg unknown option" >&2
+	    exit 1
+	fi
+    i=$(($i + 1))
+    done
+}
+
+usage()
+{
+   echo -e "USAGE: $1 -l -u\n-l : lowcase\n-u : upcase" >&2
+   exit 1
+}
+
+if [ $# -eq 0 ]
+then
+    usage $0
+fi
+checkArgs $@
+
+newStr=""
+
+while read str
+do
+    newStr="$newStr$str\n"
+done
+
+newStr=${newStr%?}
+newStr=${newStr%?}
+lastArg=$#
+
+arg=${!lastArg}
+
+if [ $arg == "-u" ]
+then
+    echo -e $newStr | tr [a-z] [A-Z];
+fi
+
+if [ $arg == "-l" ]
+then [ $arg == "-l" ]
+    echo -e $newStr | tr [A-Z] [a-z];
+fi

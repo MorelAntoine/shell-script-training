@@ -1,0 +1,32 @@
+#!/bin/sh
+
+if [ $# -ne "2" ] || [ ! -f ${1} ] || [ ! -r ${1} ]; then
+	echo "USAGE: ${0} mbox destdir" >&2;
+
+	exit 1;
+fi
+
+if [ ! -d ${2} ] || [ ! -w ${2}]; then
+	mkdir ${2};
+fi
+
+IFS="
+";
+all_index=("$(cat ${1} | grep -n "^From " | cut -d: -f1)" "$(cat ${1} | wc -l)");
+start=1;
+fileIndex=1;
+
+I=0;
+
+for end in ${all_index[@]};
+do
+	if [ $start -ne $end ]; then
+		end=$(($end - 1));
+		sed -n "$start,$end"p ${1} | sed -e ':a;N;$!ba;s/\n$//' > ${2}/$fileIndex.mail;
+		fileIndex=$(($fileIndex + 1));
+		start=$(($end + 1));
+		((I++));
+	fi
+done;
+
+echo "${I} mail found";

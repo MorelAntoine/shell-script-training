@@ -1,0 +1,38 @@
+#!/bin/sh
+
+if [ $# -eq 0 ]
+then
+    echo -e "USAGE: $0 original_stringfile replace_stringfile file\nReplace in file each string of original_stringfile by replace_stringfile" >&2
+    exit 1
+fi
+
+if [ $# -ne 3 ] || [ ! -f $1 ] || [ ! -f $2 ] || [ ! -f $3 ] || [ ! -r $1 ] || [ ! -r $2 ] || [ ! -r $3 ] || [ ! -w $3 ]
+then
+    echo "Error" >&2;
+    exit 1;
+fi
+
+sizeFileOne=$(cat $1 | wc -l)
+sizeFileTwo=$(cat $2 | wc -l)
+
+if [ $sizeFileOne -ne $sizeFileTwo ]
+then
+    echo "Error" >&2;
+    exit 1;
+fi
+
+strFile=`cat < $3`
+i=0
+sizeFileOne=$((sizeFileOne + 1))
+i=1
+
+while [ $i -lt $sizeFileOne ]
+do
+    srcString=$(sed -n "$i"p $1)
+    rplString=$(sed -n "$i"p $2)
+    strFile=`echo "$strFile" | sed -e "s/$srcString/$rplString/g"`
+    i=$(($i + 1))
+done
+
+echo "$strFile"
+exit 0;

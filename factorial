@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ $# != 1 ] || [ -z "$1" ]
+then
+    echo -e "USAGE: $0 number\nCompute factorial of a number" >&2
+    exit 1
+elif expr match "$1" "^[0-9]*$" > /dev/null;
+then
+    i=$1
+    j=1
+    fact=1
+    while [ $i -gt 0 ]
+    do
+	fact=$(($fact * $j))
+	i=$(($i - 1))
+	j=$(($j + 1))
+    done
+echo $fact
+else
+    echo "Error" >&2
+    exit 1
+fi
+exit 0
